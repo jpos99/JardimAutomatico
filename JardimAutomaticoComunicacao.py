@@ -1,7 +1,7 @@
 from time import sleep
 import paho.mqtt.client as paho
 
-dicionario_de_leituras = {}
+dicionario_de_leitura_ambiental = {}
 
 
 class ProtocoloMqtt():
@@ -11,9 +11,9 @@ class ProtocoloMqtt():
 
         leitura_recebida_da_estufa = mensagem_recebida.decode("utf-8")
         grandeza_recebida = topico_recebido.split("/")[-1]
-        dicionario_de_leituras[grandeza_recebida] = float(leitura_recebida_da_estufa)
+        dicionario_de_leitura_ambiental[grandeza_recebida] = float(leitura_recebida_da_estufa)
 
-        return dicionario_de_leituras
+        return dicionario_de_leitura_ambiental
 
     @staticmethod
     def recebe_mensagem_mqtt(client, userdata, message):
@@ -55,5 +55,6 @@ class ProtocoloMqtt():
     def subescreve_ao_topico(self, topico):
         self.cliente_mqtt.subscribe(topico)
 
-    def publica_ao_topico(self):
-        pass
+    def publica_ao_topico(self, topico, mensagem):
+        self.cliente_mqtt.publish(topico, mensagem, retain=True)
+        print("publiquei", mensagem, topico)
